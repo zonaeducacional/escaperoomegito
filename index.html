@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Maldição do Faraó - Escape Room</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+
+        .egyptian-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        .hieroglyph {
+            font-size: 2rem;
+            color: #d4af37;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .pyramid-bg {
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F4A460 100%);
+        }
+
+        .gold-text {
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+        }
+
+        .pulse-gold {
+            animation: pulse-gold 2s infinite;
+        }
+
+        @keyframes pulse-gold {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-b from-amber-900 via-yellow-800 to-orange-900 min-h-screen">
+    <!-- Timer -->
+    <div id="timer"
+        class="fixed top-4 right-4 bg-black bg-opacity-70 text-yellow-400 px-4 py-2 rounded-lg egyptian-font text-xl z-50">
+        <i class="fas fa-hourglass-half mr-2"></i>
+        <span id="time-display">60:00</span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="fixed top-0 left-0 w-full h-2 bg-black bg-opacity-50 z-40">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-yellow-400 to-yellow-600 transition-all duration-500"
+            style="width: 0%"></div>
+    </div>
+
+    <!-- Game Container -->
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+
+        <!-- Introduction Screen -->
+        <div id="intro-screen" class="text-center fade-in">
+            <div class="pyramid-bg rounded-lg p-8 mb-8 shadow-2xl">
+                <h1 class="text-6xl font-bold gold-text egyptian-font mb-4">
+                    <i class="fas fa-monument mr-4"></i>
+                    A Maldição do Faraó
+                </h1>
+                <div class="text-2xl text-yellow-200 mb-6">🏺 ESCAPE ROOM 🏺</div>
+
+                <div class="bg-black bg-opacity-50 rounded-lg p-6 text-yellow-100 text-lg leading-relaxed mb-6">
+                    <p class="mb-4">
+                        <strong>BEM-VINDOS, ARQUEÓLOGOS!</strong>
+                    </p>
+                    <p class="mb-4">
+                        Vocês estão explorando uma pirâmide antiga quando de repente... <strong>CRACK!</strong>
+                        A entrada se fecha atrás de vocês.
+                    </p>
+                    <p class="mb-4 text-red-300">
+                        <em>"Aqueles que perturbam o sono eterno do Faraó devem provar sua sabedoria
+                            ou permanecer para sempre nas trevas..."</em>
+                    </p>
+                    <p class="text-yellow-300">
+                        ⚠️ Vocês têm apenas <strong>60 minutos</strong> antes que a pirâmide se feche definitivamente!
+                    </p>
+                </div>
+
+                <button id="start-game"
+                    class="bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-4 px-8 rounded-lg text-xl egyptian-font transition-all duration-300 glow pulse-gold">
+                    <i class="fas fa-play mr-2"></i>
+                    INICIAR AVENTURA
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Sections -->
+        <div id="game-container" class="hidden">
+
+            <!-- Section 1: Entrance -->
+            <div id="section-1" class="game-section hidden fade-in">
+                <div class="bg-gradient-to-b from-amber-800 to-amber-900 rounded-lg p-8 shadow-2xl">
+                    <h2 class="text-4xl font-bold gold-text egyptian-font mb-6 text-center">
+                        🏛️ Entrada da Pirâmide
+                    </h2>
+
+                    <div class="bg-black bg-opacity-40 rounded-lg p-6 mb-6">
+                        <p class="text-yellow-100 text-lg mb-4">
+                            Vocês estão na entrada da pirâmide. As paredes são cobertas de hieróglifos antigos
+                            e há uma esfinge de pedra bloqueando o caminho. Seus olhos brilham com uma luz misteriosa...
+                        </p>
+                        <div class="text-center text-6xl mb-4">🗿</div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div class="bg-yellow-900 bg-opacity-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-2xl font-bold text-yellow-200 mb-4">O Enigma da Esfinge</h3>
+                        <p class="text-yellow-100 mb-4">
+                            A esfinge sussurra: <em>"Eu tenho quatro pernas pela manhã, duas ao meio-dia e três à noite.
+                                O que sou eu?"</em>
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button
+                                class="answer-btn bg-amber-700 hover:bg-amber-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="wrong">
+                                a) Um animal mágico
+                            </button>
+                            <button
+                                class="answer-btn bg-amber-700 hover:bg-amber-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="correct" data-code="2847">
+                                b) O ser humano
+                            </button>
+                            <button
+                                class="answer-btn bg-amber-700 hover:bg-amber-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="wrong">
+                                c) Uma criatura mitológica
+                            </button>
+                            <button
+                                class="answer-btn bg-amber-700 hover:bg-amber-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="wrong">
+                                d) O tempo
+                            </button>
+                        </div>
+
+                        <div id="feedback-1" class="mt-4 p-4 rounded-lg hidden"></div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div id="question-2" class="bg-yellow-900 bg-opacity-50 rounded-lg p-6 mb-6 hidden">
+                        <h3 class="text-2xl font-bold text-yellow-200 mb-4">O Primeiro Hieróglifo</h3>
+                        <p class="text-yellow-100 mb-4">
+                            Ao passar pela esfinge, vocês encontram uma parede com hieróglifos.
+                            Há uma sequência de símbolos que parecem números:
+                        </p>
+                        <div class="text-center hieroglyph mb-4">𓏺𓎆𓅱𓏤</div>
+                        <p class="text-yellow-100 mb-4">Decifrem o código numérico escondido nos hieróglifos:</p>
+
+                        <input type="number" id="code-input-1"
+                            class="w-full p-3 rounded-lg bg-amber-800 text-white text-center text-xl"
+                            placeholder="Digite o código de 4 dígitos">
+                        <button id="submit-code-1"
+                            class="w-full mt-4 bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition-all">
+                            Inserir Código
+                        </button>
+
+                        <div id="feedback-2" class="mt-4 p-4 rounded-lg hidden"></div>
+                    </div>
+
+                    <button id="next-section-1"
+                        class="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-lg text-xl hidden transition-all">
+                        Avançar para a Sala das Esfinges <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 2: Sphinx Room -->
+            <div id="section-2" class="game-section hidden fade-in">
+                <div class="bg-gradient-to-b from-orange-800 to-red-900 rounded-lg p-8 shadow-2xl">
+                    <h2 class="text-4xl font-bold gold-text egyptian-font mb-6 text-center">
+                        🦁 Sala das Esfinges
+                    </h2>
+
+                    <div class="bg-black bg-opacity-40 rounded-lg p-6 mb-6">
+                        <p class="text-yellow-100 text-lg mb-4">
+                            Vocês entram em uma sala circular com três esfinges de tamanhos diferentes.
+                            Cada uma guarda um fragmento do conhecimento necessário para prosseguir.
+                        </p>
+                        <div class="text-center text-4xl mb-4">🦁 🦁 🦁</div>
+                        <div class="text-center">
+                            <div class="inline-block bg-yellow-800 rounded-lg p-4">
+                                <div class="text-2xl mb-2">📜 Papiro dos Elementos</div>
+                                <div class="text-3xl">🌊 🔥 🌪️ 🏔️</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="bg-red-900 bg-opacity-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-2xl font-bold text-yellow-200 mb-4">O Papiro dos Elementos</h3>
+                        <p class="text-yellow-100 mb-4">
+                            A primeira esfinge pergunta: "Qual elemento era mais sagrado para os antigos egípcios,
+                            pois trazia vida ao deserto?"
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button
+                                class="answer-btn bg-red-700 hover:bg-red-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="correct" data-symbol="☀️">
+                                🔥 Fogo - o poder de Rá
+                            </button>
+                            <button
+                                class="answer-btn bg-red-700 hover:bg-red-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="wrong">
+                                🌊 Água - as cheias do Nilo
+                            </button>
+                            <button
+                                class="answer-btn bg-red-700 hover:bg-red-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="wrong">
+                                🌪️ Ar - o sopro da vida
+                            </button>
+                            <button
+                                class="answer-btn bg-red-700 hover:bg-red-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="wrong">
+                                🏔️ Terra - a base de tudo
+                            </button>
+                        </div>
+
+                        <div id="feedback-3" class="mt-4 p-4 rounded-lg hidden"></div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div id="question-4" class="bg-red-900 bg-opacity-50 rounded-lg p-6 mb-6 hidden">
+                        <h3 class="text-2xl font-bold text-yellow-200 mb-4">O Enigma dos Números Sagrados</h3>
+                        <p class="text-yellow-100 mb-4">
+                            A segunda esfinge apresenta um enigma matemático:
+                        </p>
+                        <div class="bg-black bg-opacity-50 rounded-lg p-4 mb-4">
+                            <p class="text-yellow-200 mb-2">"No antigo Egito:</p>
+                            <ul class="text-yellow-100 list-disc list-inside mb-2">
+                                <li>Deuses principais: <strong>9</strong></li>
+                                <li>Meses sagrados: <strong>12</strong></li>
+                                <li>Dias de mumificação: <strong>70</strong></li>
+                            </ul>
+                            <p class="text-yellow-200">Some estes números e multiplique pelos lados de uma pirâmide (sem
+                                a base):"</p>
+                        </div>
+
+                        <input type="number" id="code-input-2"
+                            class="w-full p-3 rounded-lg bg-red-800 text-white text-center text-xl"
+                            placeholder="Digite o resultado">
+                        <button id="submit-code-2"
+                            class="w-full mt-4 bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition-all">
+                            Inserir Resposta
+                        </button>
+
+                        <div id="feedback-4" class="mt-4 p-4 rounded-lg hidden"></div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div id="question-5" class="bg-red-900 bg-opacity-50 rounded-lg p-6 mb-6 hidden">
+                        <h3 class="text-2xl font-bold text-yellow-200 mb-4">A Interpretação dos Hieróglifos</h3>
+                        <p class="text-yellow-100 mb-4">
+                            A terceira esfinge mostra um conjunto complexo de hieróglifos:
+                        </p>
+                        <div class="text-center hieroglyph mb-4">𓀀 𓈖 𓎡 𓊪 𓏏 𓊨 𓏏 𓊖</div>
+                        <p class="text-yellow-100 mb-4">
+                            Interpretem esta história hieroglífica. O que ela conta sobre a jornada do faraó?
+                        </p>
+
+                        <textarea id="interpretation" class="w-full p-3 rounded-lg bg-red-800 text-white h-32"
+                            placeholder="Descreva a jornada do faraó..."></textarea>
+                        <button id="submit-interpretation"
+                            class="w-full mt-4 bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition-all">
+                            Enviar Interpretação
+                        </button>
+
+                        <div id="feedback-5" class="mt-4 p-4 rounded-lg hidden"></div>
+                    </div>
+
+                    <div id="symbols-collected" class="bg-yellow-800 rounded-lg p-4 mb-6 hidden">
+                        <h4 class="text-xl font-bold text-center mb-2">Símbolos Coletados:</h4>
+                        <div id="symbol-display" class="text-center text-4xl"></div>
+                    </div>
+
+                    <button id="next-section-2"
+                        class="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-lg text-xl hidden transition-all">
+                        Entrar na Tumba do Faraó <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 3: Pharaoh's Tomb -->
+            <div id="section-3" class="game-section hidden fade-in">
+                <div class="bg-gradient-to-b from-yellow-800 to-amber-900 rounded-lg p-8 shadow-2xl">
+                    <h2 class="text-4xl font-bold gold-text egyptian-font mb-6 text-center">
+                        ⚱️ Tumba do Faraó
+                    </h2>
+
+                    <div class="bg-black bg-opacity-40 rounded-lg p-6 mb-6">
+                        <p class="text-yellow-100 text-lg mb-4">
+                            Vocês entram na câmara principal - a tumba do faraó. O sarcófago dourado domina o centro da
+                            sala,
+                            cercado por tesouros e objetos funerários. Mas algo está errado... o sarcófago está vazio!
+                        </p>
+                        <div class="text-center text-6xl mb-4">⚰️</div>
+                        <p class="text-red-300 text-center italic">
+                            "Minha alma não encontra descanso. Devolvam-me o que foi roubado..."
+                        </p>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="bg-amber-900 bg-opacity-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-2xl font-bold text-yellow-200 mb-4">O Tesouro Perdido</h3>
+                        <p class="text-yellow-100 mb-4">
+                            Observando os tesouros ao redor, vocês notam que falta algo importante.
+                            Baseando-se no conhecimento sobre rituais funerários egípcios, o que provavelmente foi
+                            roubado?
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button
+                                class="answer-btn bg-amber-700 hover:bg-amber-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="wrong">
+                                👑 O cetro real
+                            </button>
+                            <button
+                                class="answer-btn bg-amber-700 hover:bg-amber-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="correct">
+                                💀 O coração mumificado
+                            </button>
+                            <button
+                                class="answer-btn bg-amber-700 hover:bg-amber-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="wrong">
+                                👑 A coroa de ouro
+                            </button>
+                            <button
+                                class="answer-btn bg-amber-700 hover:bg-amber-600 text-white p-4 rounded-lg transition-all"
+                                data-answer="wrong">
+                                🏺 Os vasos canopos
+                            </button>
+                        </div>
+
+                        <div id="feedback-6" class="mt-4 p-4 rounded-lg hidden"></div>
+                    </div>
+
+                    <!-- Question 7 -->
+                    <div id="question-7" class="bg-amber-900 bg-opacity-50 rounded-lg p-6 mb-6 hidden">
+                        <h3 class="text-2xl font-bold text-yellow-200 mb-4">O Código do Sarcófago</h3>
+                        <div class="bg-black bg-opacity-50 rounded-lg p-4 mb-4">
+                            <p class="text-yellow-100 mb-2">No sarcófago há um mecanismo com quatro dígitos.</p>
+                            <p class="text-yellow-200 mb-2"><strong>Pista 1:</strong> Lembrem-se do código da entrada:
+                                <span id="entrance-code">2847</span></p>
+                            <p class="text-yellow-200 mb-2"><strong>Pista 2:</strong> "Onde o sol nasce pela última vez"
+                                = Leste se torna Oeste</p>
+                            <p class="text-yellow-200"><strong>Pista 3:</strong> Invertam a ordem dos números</p>
+                        </div>
+
+                        <input type="number" id="code-input-3"
+                            class="w-full p-3 rounded-lg bg-amber-800 text-white text-center text-xl"
+                            placeholder="Digite o código de 4 dígitos">
+                        <button id="submit-code-3"
+                            class="w-full mt-4 bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition-all">
+                            Inserir Código
+                        </button>
+
+                        <div id="feedback-7" class="mt-4 p-4 rounded-lg hidden"></div>
+                    </div>
+
+                    <button id="next-section-3"
+                        class="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-lg text-xl hidden transition-all">
+                        Entrar na Câmara Secreta <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 4: Secret Chamber -->
+            <div id="section-4" class="game-section hidden fade-in">
+                <div class="bg-gradient-to-b from-purple-800 to-indigo-900 rounded-lg p-8 shadow-2xl">
+                    <h2 class="text-4xl font-bold gold-text egyptian-font mb-6 text-center">
+                        🔮 Câmara Secreta
+                    </h2>
+
+                    <div class="bg-black bg-opacity-40 rounded-lg p-6 mb-6">
+                        <p class="text-yellow-100 text-lg mb-4">
+                            Vocês entram na câmara mais profunda da pirâmide. As paredes pulsam com uma energia
+                            misteriosa.
+                            No centro há um altar com três encaixes circulares!
+                        </p>
+                        <div class="text-center text-6xl mb-4">🔮</div>
+                        <div class="text-center">
+                            <div class="inline-block bg-purple-800 rounded-lg p-4">
+                                <div class="text-2xl mb-2">⏳ ATENÇÃO: O tempo está acabando!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 8 -->
+                    <div class="bg-purple-900 bg-opacity-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-2xl font-bold text-yellow-200 mb-4">O Enigma Final dos Símbolos</h3>
+                        <p class="text-yellow-100 mb-4">
+                            Vocês devem colocar os três símbolos sagrados na ordem correta no altar.
+                        </p>
+                        <div class="bg-black bg-opacity-50 rounded-lg p-4 mb-4">
+                            <p class="text-yellow-200 mb-2">Símbolos coletados:</p>
+                            <div class="text-3xl mb-2">☀️ (Sol/Rá) = 1</div>
+                            <div class="text-3xl mb-2">🔺 (Pirâmide) = 2</div>
+                            <div class="text-3xl mb-2">👁️ (Olho de Hórus) = 3</div>
+                            <p class="text-yellow-200 mt-4">A inscrição no altar diz: <em>"Da luz nasce a forma, da
+                                    forma nasce a proteção"</em></p>
+                        </div>
+
+                        <input type="text" id="symbol-order"
+                            class="w-full p-3 rounded-lg bg-purple-800 text-white text-center text-xl"
+                            placeholder="Digite a ordem (ex: 123)" maxlength="3">
+                        <button id="submit-symbols"
+                            class="w-full mt-4 bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition-all">
+                            Colocar Símbolos no Altar
+                        </button>
+
+                        <div id="feedback-8" class="mt-4 p-4 rounded-lg hidden"></div>
+                    </div>
+
+                    <!-- Question 9 -->
+                    <div id="question-9" class="bg-purple-900 bg-opacity-50 rounded-lg p-6 mb-6 hidden">
+                        <h3 class="text-2xl font-bold text-yellow-200 mb-4">A Palavra de Poder</h3>
+                        <div class="bg-black bg-opacity-50 rounded-lg p-4 mb-4">
+                            <p class="text-yellow-100 mb-4">
+                                Com o coração devolvido, o espírito do faraó aparece diante de vocês, pacificado. Ele
+                                diz:
+                            </p>
+                            <p class="text-green-300 italic mb-4">
+                                "Vocês demonstraram sabedoria, coragem e respeito pelos antigos. Como recompensa,
+                                revelarei a palavra de poder que abrirá a saída."
+                            </p>
+                            <p class="text-yellow-100 mb-4">
+                                Ele aponta para hieróglifos na parede que formam uma palavra:
+                            </p>
+                            <div class="text-center hieroglyph mb-4">𓃭 𓇋 𓃀 𓇌 𓂋 𓂧 𓄿 𓂧 𓇌</div>
+                        </div>
+
+                        <input type="text" id="power-word"
+                            class="w-full p-3 rounded-lg bg-purple-800 text-white text-center text-xl"
+                            placeholder="Digite a palavra de poder">
+                        <button id="submit-power-word"
+                            class="w-full mt-4 bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-3 rounded-lg transition-all">
+                            Pronunciar a Palavra de Poder
+                        </button>
+
+                        <div id="feedback-9" class="mt-4 p-4 rounded-lg hidden"></div>
+                    </div>
+
+                    <button id="next-section-4"
+                        class="w-full mt-6 bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-lg text-xl hidden transition-all">
+                        Escapar da Pirâmide! <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 5: Victory -->
+            <div id="section-5" class="game-section hidden fade-in">
+                <div class="bg-gradient-to-b from-green-600 to-emerald-800 rounded-lg p-8 shadow-2xl text-center">
+                    <h2 class="text-5xl font-bold gold-text egyptian-font mb-6">
+                        🏆 VITÓRIA!
+                    </h2>
+                    <h3 class="text-3xl text-green-200 mb-6">Vocês Escaparam!</h3>
+
+                    <div class="bg-black bg-opacity-40 rounded-lg p-6 mb-6">
+                        <div class="text-6xl mb-4">🎉</div>
+                        <p class="text-green-100 text-xl mb-4">
+                            <strong>PARABÉNS, CORAJOSOS ARQUEÓLOGOS!</strong>
+                        </p>
+                        <p class="text-green-100 text-lg mb-4">
+                            Vocês conseguiram escapar da pirâmide e quebrar a maldição do faraó!
+                            Sua sabedoria, trabalho em equipe e respeito pela história antiga os salvaram.
+                        </p>
+                        <div class="text-4xl mb-4">🌅</div>
+                        <p class="text-green-200 italic">
+                            O faraó, agora em paz, os abençoa com conhecimento eterno.
+                            Vocês emergem da pirâmide carregando não apenas suas vidas,
+                            mas também uma compreensão mais profunda da rica cultura egípcia.
+                        </p>
+                    </div>
+
+                    <div class="bg-green-800 bg-opacity-50 rounded-lg p-6 mb-6">
+                        <h4 class="text-2xl font-bold text-green-200 mb-4">📊 Estatísticas da Aventura</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-green-100">
+                            <div>
+                                <div class="text-2xl font-bold" id="final-time">--:--</div>
+                                <div>Tempo Final</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold">9</div>
+                                <div>Enigmas Resolvidos</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold">3</div>
+                                <div>Códigos Decifrados</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold">3</div>
+                                <div>Símbolos Coletados</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Certificate Preview -->
+                    <div class="bg-gradient-to-b from-yellow-100 to-amber-200 text-black rounded-lg p-8 mb-6 border-4 border-yellow-600 shadow-2xl"
+                        style="background-image: url('data:image/svg+xml,<svg xmlns=\" http://www.w3.org/2000/svg\"
+                        viewBox=\"0 0 100 100\">
+                        <defs>
+                            <pattern id=\"papyrus\" patternUnits=\"userSpaceOnUse\" width=\"20\" height=\"20\">
+                                <rect width=\"20\" height=\"20\" fill=\"%23F4E4BC\" />
+                                <circle cx=\"5\" cy=\"5\" r=\"1\" fill=\"%23D4AF37\" opacity=\"0.3\" />
+                                <circle cx=\"15\" cy=\"15\" r=\"1\" fill=\"%23D4AF37\" opacity=\"0.3\" />
+                            </pattern>
+                        </defs>
+                        <rect width=\"100\" height=\"100\" fill=\"url(%23papyrus)\" /></svg>');">
+                        <div class="text-center egyptian-font">
+                            <div class="text-4xl mb-4">📜</div>
+                            <h4 class="text-3xl font-bold mb-4 gold-text">CERTIFICADO DE CONCLUSÃO</h4>
+                            <div class="text-6xl mb-4">🏺</div>
+
+                            <div class="bg-black bg-opacity-10 rounded-lg p-6 mb-4">
+                                <p class="text-xl mb-2">Por este meio certificamos que</p>
+                                <div class="text-2xl font-bold mb-4 border-b-2 border-yellow-600 pb-2">
+                                    <span id="player-name-display">OS CORAJOSOS ARQUEÓLOGOS</span>
+                                </div>
+                                <p class="text-lg mb-2">completaram com sucesso a aventura</p>
+                                <p class="text-2xl font-bold mb-4">"A MALDIÇÃO DO FARAÓ"</p>
+                                <p class="text-lg mb-2">demonstrando sabedoria, coragem e respeito</p>
+                                <p class="text-lg mb-4">pela rica cultura do Antigo Egito</p>
+
+                                <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                                    <div>
+                                        <strong>Tempo de Conclusão:</strong><br>
+                                        <span id="cert-time">--:--</span>
+                                    </div>
+                                    <div>
+                                        <strong>Data da Aventura:</strong><br>
+                                        <span id="cert-date">--</span>
+                                    </div>
+                                </div>
+
+                                <p class="text-lg font-bold">Título Concedido:</p>
+                                <p class="text-xl font-bold text-yellow-800">ARQUEÓLOGO HONORÁRIO DA PIRÂMIDE</p>
+                            </div>
+
+                            <div class="flex justify-center items-center space-x-8 mb-4">
+                                <div class="text-center">
+                                    <div class="text-3xl mb-2">☀️</div>
+                                    <div class="text-sm">Poder de Rá</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-3xl mb-2">🔺</div>
+                                    <div class="text-sm">Sabedoria da Pirâmide</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-3xl mb-2">👁️</div>
+                                    <div class="text-sm">Proteção de Hórus</div>
+                                </div>
+                            </div>
+
+                            <div class="text-sm italic">
+                                "Que os deuses egípcios os protejam em futuras aventuras"
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Player Name Input -->
+                    <div class="bg-yellow-800 bg-opacity-50 rounded-lg p-4 mb-6">
+                        <label class="block text-yellow-200 text-lg font-bold mb-2">
+                            Digite seu nome para personalizar o certificado:
+                        </label>
+                        <input type="text" id="player-name"
+                            class="w-full p-3 rounded-lg bg-yellow-900 text-white text-center text-xl"
+                            placeholder="Seu nome ou nome da equipe" maxlength="50">
+                        <button id="update-certificate"
+                            class="w-full mt-3 bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 rounded-lg transition-all">
+                            Atualizar Certificado
+                        </button>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-4 mb-6">
+                        <button id="download-certificate"
+                            class="bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-4 px-6 rounded-lg text-xl transition-all pulse-gold">
+                            <i class="fas fa-download mr-2"></i>
+                            Baixar Certificado PDF
+                        </button>
+
+                        <button id="restart-game"
+                            class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-6 rounded-lg text-xl transition-all">
+                            <i class="fas fa-redo mr-2"></i>
+                            Jogar Novamente
+                        </button>
+
+                        <button id="share-victory"
+                            class="bg-green-600 hover:bg-green-500 text-white font-bold py-4 px-6 rounded-lg text-xl transition-all">
+                            <i class="fas fa-share mr-2"></i>
+                            Compartilhar Vitória
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="hidden text-center fade-in">
+            <div class="bg-red-900 rounded-lg p-8 shadow-2xl">
+                <h2 class="text-5xl font-bold text-red-300 egyptian-font mb-6">
+                    💀 GAME OVER 💀
+                </h2>
+                <div class="text-6xl mb-6">⏰</div>
+                <p class="text-red-200 text-xl mb-6">
+                    O tempo acabou! A pirâmide se fechou para sempre e vocês ficaram presos nas trevas eternas...
+                </p>
+                <p class="text-red-300 text-lg mb-6">
+                    A maldição do faraó prevaleceu. Mas não desistam - os verdadeiros arqueólogos sempre tentam
+                    novamente!
+                </p>
+
+                <button id="restart-game-over"
+                    class="bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-4 px-8 rounded-lg text-xl transition-all">
+                    <i class="fas fa-redo mr-2"></i>
+                    Tentar Novamente
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            currentSection: 0,
+            timeLeft: 3600, // 60 minutes in seconds
+            timerInterval: null,
+            symbols: [],
+            codes: {
+                entrance: '2847'
+            },
+            gameStarted: false,
+            gameEnded: false
+        };
+
+        // Initialize game
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeGame();
+        });
+
+        function initializeGame() {
+            // Start game button
+            document.getElementById('start-game').addEventListener('click', startGame);
+
+            // Restart buttons
+            document.getElementById('restart-game').addEventListener('click', restartGame);
+            document.getElementById('restart-game-over').addEventListener('click', restartGame);
+
+            // Share button
+            document.getElementById('share-victory').addEventListener('click', shareVictory);
+
+            // Certificate buttons
+            document.getElementById('update-certificate').addEventListener('click', updateCertificate);
+            document.getElementById('download-certificate').addEventListener('click', downloadCertificate);
+
+            // Section navigation buttons
+            document.getElementById('next-section-1').addEventListener('click', () => goToSection(2));
+            document.getElementById('next-section-2').addEventListener('click', () => goToSection(3));
+            document.getElementById('next-section-3').addEventListener('click', () => goToSection(4));
+            document.getElementById('next-section-4').addEventListener('click', () => goToSection(5));
+
+            // Answer buttons and inputs
+            setupAnswerHandlers();
+        }
+
+        function startGame() {
+            gameState.gameStarted = true;
+            gameState.gameEnded = false;
+
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+
+            startTimer();
+            goToSection(1);
+        }
+
+        function startTimer() {
+            gameState.timerInterval = setInterval(() => {
+                if (gameState.gameEnded) return;
+
+                gameState.timeLeft--;
+                updateTimerDisplay();
+
+                if (gameState.timeLeft <= 0) {
+                    gameOver();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(gameState.timeLeft / 60);
+            const seconds = gameState.timeLeft % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('time-display').textContent = display;
+
+            // Change color when time is running low
+            const timerElement = document.getElementById('timer');
+            if (gameState.timeLeft <= 300) { // 5 minutes
+                timerElement.classList.add('text-red-400');
+                timerElement.classList.remove('text-yellow-400');
+            }
+        }
+
+        function goToSection(sectionNumber) {
+            // Hide all sections
+            document.querySelectorAll('.game-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Show target section
+            document.getElementById(`section-${sectionNumber}`).classList.remove('hidden');
+
+            // Update progress bar
+            const progress = (sectionNumber - 1) * 20;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            gameState.currentSection = sectionNumber;
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function setupAnswerHandlers() {
+            // Section 1 - Question 1 (Sphinx riddle)
+            document.querySelectorAll('#section-1 .answer-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const isCorrect = this.dataset.answer === 'correct';
+                    const feedback = document.getElementById('feedback-1');
+
+                    if (isCorrect) {
+                        const code = this.dataset.code;
+                        gameState.codes.entrance = code;
+                        feedback.className = 'mt-4 p-4 rounded-lg bg-green-800 text-green-200';
+                        feedback.innerHTML = `
+                            🎉 <strong>CORRETO!</strong> A esfinge sorri e se afasta, revelando uma passagem.<br>
+                            Os olhos da esfinge brilham e projetam números na parede: <strong>${code}</strong><br>
+                            Anotem este código - vocês precisarão dele mais tarde!
+                        `;
+                        document.getElementById('question-2').classList.remove('hidden');
+                    } else {
+                        feedback.className = 'mt-4 p-4 rounded-lg bg-red-800 text-red-200 shake';
+                        feedback.innerHTML = '❌ A esfinge balança a cabeça negativamente. "Pensem melhor, mortais. A resposta está na jornada da vida..."';
+                        setTimeout(() => feedback.classList.remove('shake'), 500);
+                    }
+                    feedback.classList.remove('hidden');
+                });
+            });
+
+            // Section 1 - Question 2 (Hieroglyph code)
+            document.getElementById('submit-code-1').addEventListener('click', function () {
+                const input = document.getElementById('code-input-1').value;
+                const feedback = document.getElementById('feedback-2');
+
+                if (input === '1983') {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-green-800 text-green-200';
+                    feedback.innerHTML = '✨ <strong>EXCELENTE!</strong> Os hieróglifos brilham dourado. Uma porta secreta se abre lentamente, revelando a Sala das Esfinges.';
+                    document.getElementById('next-section-1').classList.remove('hidden');
+                } else {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-red-800 text-red-200 shake';
+                    feedback.innerHTML = '🔍 Os hieróglifos permanecem opacos. Observem mais atentamente os símbolos. Cada um representa um número...';
+                    setTimeout(() => feedback.classList.remove('shake'), 500);
+                }
+                feedback.classList.remove('hidden');
+            });
+
+            // Section 2 - Question 3 (Elements)
+            document.querySelectorAll('#section-2 .answer-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const isCorrect = this.dataset.answer === 'correct';
+                    const feedback = document.getElementById('feedback-3');
+
+                    if (isCorrect) {
+                        const symbol = this.dataset.symbol;
+                        gameState.symbols.push(symbol);
+                        feedback.className = 'mt-4 p-4 rounded-lg bg-green-800 text-green-200';
+                        feedback.innerHTML = `
+                            🌟 <strong>CORRETO!</strong> A primeira esfinge se inclina respeitosamente.<br>
+                            Ela revela um símbolo dourado: <span class="text-3xl">${symbol}</span><br>
+                            Este símbolo será importante para o enigma final!
+                        `;
+                        document.getElementById('question-4').classList.remove('hidden');
+                        updateSymbolDisplay();
+                    } else {
+                        feedback.className = 'mt-4 p-4 rounded-lg bg-red-800 text-red-200 shake';
+                        feedback.innerHTML = '❌ A esfinge balança a cabeça. "Pensem no que realmente dava vida ao Egito..."';
+                        setTimeout(() => feedback.classList.remove('shake'), 500);
+                    }
+                    feedback.classList.remove('hidden');
+                });
+            });
+
+            // Section 2 - Question 4 (Math puzzle)
+            document.getElementById('submit-code-2').addEventListener('click', function () {
+                const input = document.getElementById('code-input-2').value;
+                const feedback = document.getElementById('feedback-4');
+
+                if (input === '364') { // (9+12+70) * 4 = 364
+                    gameState.symbols.push('🔺');
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-green-800 text-green-200';
+                    feedback.innerHTML = '🔢 <strong>PERFEITO!</strong> A segunda esfinge sorri. "A matemática é a linguagem dos deuses."<br>Ela revela outro símbolo: <span class="text-3xl">🔺</span>';
+                    document.getElementById('question-5').classList.remove('hidden');
+                    updateSymbolDisplay();
+                } else {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-red-800 text-red-200 shake';
+                    feedback.innerHTML = '🔍 Verifiquem os cálculos. Lembrem-se: (9 + 12 + 70) × 4 lados da pirâmide...';
+                    setTimeout(() => feedback.classList.remove('shake'), 500);
+                }
+                feedback.classList.remove('hidden');
+            });
+
+            // Section 2 - Question 5 (Interpretation)
+            document.getElementById('submit-interpretation').addEventListener('click', function () {
+                const input = document.getElementById('interpretation').value.toLowerCase();
+                const feedback = document.getElementById('feedback-5');
+                const keywords = ['vida', 'morte', 'renascimento', 'faraó', 'jornada', 'eterno'];
+                const hasKeywords = keywords.some(keyword => input.includes(keyword));
+
+                if (hasKeywords && input.length > 20) {
+                    gameState.symbols.push('👁️');
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-green-800 text-green-200';
+                    feedback.innerHTML = `
+                        📜 <strong>IMPRESSIONANTE!</strong> Vocês compreenderam a essência da mensagem.<br>
+                        A terceira esfinge revela o último símbolo: <span class="text-3xl">👁️</span> (Olho de Hórus)<br>
+                        Agora vocês têm os três símbolos sagrados!
+                    `;
+                    document.getElementById('next-section-2').classList.remove('hidden');
+                    updateSymbolDisplay();
+                } else {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-red-800 text-red-200 shake';
+                    feedback.innerHTML = '🔍 A esfinge não está satisfeita. Pensem mais profundamente sobre o ciclo da vida, morte e renascimento do faraó...';
+                    setTimeout(() => feedback.classList.remove('shake'), 500);
+                }
+                feedback.classList.remove('hidden');
+            });
+
+            // Section 3 - Question 6 (Missing treasure)
+            document.querySelectorAll('#section-3 .answer-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const isCorrect = this.dataset.answer === 'correct';
+                    const feedback = document.getElementById('feedback-6');
+
+                    if (isCorrect) {
+                        feedback.className = 'mt-4 p-4 rounded-lg bg-green-800 text-green-200';
+                        feedback.innerHTML = `
+                            💀 <strong>CORRETO!</strong> O coração era essencial para a jornada no além.<br>
+                            Vocês encontram uma pista: "O coração está onde o sol nasce pela última vez."<br>
+                            Lembrem-se do código da entrada: <strong>${gameState.codes.entrance}</strong>
+                        `;
+                        document.getElementById('question-7').classList.remove('hidden');
+                        document.getElementById('entrance-code').textContent = gameState.codes.entrance;
+                    } else {
+                        feedback.className = 'mt-4 p-4 rounded-lg bg-red-800 text-red-200 shake';
+                        feedback.innerHTML = '❌ Não é isso. Pensem no que era mais importante para a vida após a morte no Egito antigo...';
+                        setTimeout(() => feedback.classList.remove('shake'), 500);
+                    }
+                    feedback.classList.remove('hidden');
+                });
+            });
+
+            // Section 3 - Question 7 (Sarcophagus code)
+            document.getElementById('submit-code-3').addEventListener('click', function () {
+                const input = document.getElementById('code-input-3').value;
+                const feedback = document.getElementById('feedback-7');
+                const reversedCode = gameState.codes.entrance.split('').reverse().join('');
+
+                if (input === reversedCode) {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-green-800 text-green-200';
+                    feedback.innerHTML = '🔓 <strong>CLIQUE!</strong> O mecanismo se ativa e uma passagem secreta se abre na parede leste.<br>A voz do faraó sussurra: "Vocês estão próximos... mas o maior desafio ainda os aguarda."';
+                    document.getElementById('next-section-3').classList.remove('hidden');
+                } else {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-red-800 text-red-200 shake';
+                    feedback.innerHTML = `🔍 Código incorreto. Lembrem-se: invertam a ordem dos números do código da entrada (${gameState.codes.entrance})...`;
+                    setTimeout(() => feedback.classList.remove('shake'), 500);
+                }
+                feedback.classList.remove('hidden');
+            });
+
+            // Section 4 - Question 8 (Symbol order)
+            document.getElementById('submit-symbols').addEventListener('click', function () {
+                const input = document.getElementById('symbol-order').value;
+                const feedback = document.getElementById('feedback-8');
+
+                if (input === '123') {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-green-800 text-green-200';
+                    feedback.innerHTML = '✨ <strong>BRILHANTE!</strong> Os símbolos se encaixam perfeitamente e começam a brilhar intensamente!<br>O altar se eleva, revelando o coração mumificado do faraó...';
+                    document.getElementById('question-9').classList.remove('hidden');
+                } else {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-red-800 text-red-200 shake';
+                    feedback.innerHTML = '🔍 Ordem incorreta. Pensem: "Da luz nasce a forma, da forma nasce a proteção"...';
+                    setTimeout(() => feedback.classList.remove('shake'), 500);
+                }
+                feedback.classList.remove('hidden');
+            });
+
+            // Section 4 - Question 9 (Power word)
+            document.getElementById('submit-power-word').addEventListener('click', function () {
+                const input = document.getElementById('power-word').value.toUpperCase();
+                const feedback = document.getElementById('feedback-9');
+
+                if (input === 'LIBERDADE') {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-green-800 text-green-200';
+                    feedback.innerHTML = '🎊 <strong>LIBERDADE!</strong> A palavra ecoa pela câmara com poder ancestral!<br>O faraó sorri: "Vocês compreenderam que a verdadeira liberdade vem do conhecimento e do respeito."<br>Uma passagem dourada se abre, banhada pela luz do sol...';
+                    document.getElementById('next-section-4').classList.remove('hidden');
+                } else {
+                    feedback.className = 'mt-4 p-4 rounded-lg bg-red-800 text-red-200 shake';
+                    feedback.innerHTML = '🔍 Palavra incorreta. Observem os hieróglifos com atenção... L-I-B-E-R-D-A-D-E';
+                    setTimeout(() => feedback.classList.remove('shake'), 500);
+                }
+                feedback.classList.remove('hidden');
+            });
+        }
+
+        function updateSymbolDisplay() {
+            const display = document.getElementById('symbol-display');
+            const container = document.getElementById('symbols-collected');
+
+            if (gameState.symbols.length > 0) {
+                display.innerHTML = gameState.symbols.join(' ');
+                container.classList.remove('hidden');
+            }
+        }
+
+        function gameOver() {
+            gameState.gameEnded = true;
+            clearInterval(gameState.timerInterval);
+
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.remove('hidden');
+        }
+
+        function victory() {
+            gameState.gameEnded = true;
+            clearInterval(gameState.timerInterval);
+
+            // Calculate final time
+            const totalTime = 3600;
+            const timeUsed = totalTime - gameState.timeLeft;
+            const minutes = Math.floor(timeUsed / 60);
+            const seconds = timeUsed % 60;
+            const finalTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            document.getElementById('final-time').textContent = finalTime;
+
+            goToSection(5);
+        }
+
+        function restartGame() {
+            // Reset game state
+            gameState = {
+                currentSection: 0,
+                timeLeft: 3600,
+                timerInterval: null,
+                symbols: [],
+                codes: {
+                    entrance: '2847'
+                },
+                gameStarted: false,
+                gameEnded: false
+            };
+
+            // Clear timer
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+            }
+
+            // Reset UI
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('game-over-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+
+            // Reset timer display
+            document.getElementById('time-display').textContent = '60:00';
+            document.getElementById('timer').classList.remove('text-red-400');
+            document.getElementById('timer').classList.add('text-yellow-400');
+
+            // Reset progress bar
+            document.getElementById('progress-bar').style.width = '0%';
+
+            // Clear all inputs and feedback
+            document.querySelectorAll('input, textarea').forEach(input => input.value = '');
+            document.querySelectorAll('[id^="feedback-"]').forEach(feedback => {
+                feedback.classList.add('hidden');
+                feedback.className = 'mt-4 p-4 rounded-lg hidden';
+            });
+
+            // Hide all conditional elements
+            document.querySelectorAll('[id^="question-"], [id^="next-section-"], #symbols-collected').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            // Reset symbol display
+            gameState.symbols = [];
+            updateSymbolDisplay();
+        }
+
+        function shareVictory() {
+            const text = `🏆 Acabei de escapar da Maldição do Faraó! Consegui resolver todos os enigmas e quebrar a maldição em ${document.getElementById('final-time').textContent}! 🏺✨`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'A Maldição do Faraó - Escape Room',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback - copy to clipboard
+                navigator.clipboard.writeText(text + ' ' + window.location.href).then(() => {
+                    alert('Texto copiado para a área de transferência!');
+                });
+            }
+        }
+
+        // Auto-advance to victory when reaching section 5
+        document.getElementById('next-section-4').addEventListener('click', victory);
+
+        function updateCertificate() {
+            const playerName = document.getElementById('player-name').value.trim();
+            const displayName = playerName || 'OS CORAJOSOS ARQUEÓLOGOS';
+            document.getElementById('player-name-display').textContent = displayName.toUpperCase();
+        }
+
+        function downloadCertificate() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // Get player data
+            const playerName = document.getElementById('player-name').value.trim() || 'OS CORAJOSOS ARQUEÓLOGOS';
+            const finalTime = document.getElementById('final-time').textContent;
+            const currentDate = new Date().toLocaleDateString('pt-BR');
+
+            // Set background color (papyrus-like)
+            doc.setFillColor(244, 228, 188);
+            doc.rect(0, 0, 297, 210, 'F');
+
+            // Add papyrus texture pattern
+            doc.setFillColor(212, 175, 55);
+            for (let i = 0; i < 297; i += 20) {
+                for (let j = 0; j < 210; j += 20) {
+                    if (Math.random() > 0.7) {
+                        doc.circle(i + 5, j + 5, 1, 'F');
+                    }
+                }
+            }
+
+            // Add decorative border
+            doc.setDrawColor(212, 175, 55);
+            doc.setLineWidth(3);
+            doc.rect(10, 10, 277, 190);
+
+            doc.setLineWidth(1);
+            doc.rect(15, 15, 267, 180);
+
+            // Add hieroglyphic decorations
+            doc.setFontSize(20);
+            doc.setTextColor(212, 175, 55);
+
+            // Top decorations
+            doc.text('𓀀 𓈖 𓎡 𓊪 𓏏 𓊨 𓏏 𓊖', 148.5, 30, { align: 'center' });
+
+            // Side decorations
+            doc.text('𓏺', 25, 50);
+            doc.text('𓎆', 25, 80);
+            doc.text('𓅱', 25, 110);
+            doc.text('𓏤', 25, 140);
+
+            doc.text('𓃭', 272, 50);
+            doc.text('𓇋', 272, 80);
+            doc.text('𓃀', 272, 110);
+            doc.text('𓇌', 272, 140);
+
+            // Title
+            doc.setFontSize(28);
+            doc.setTextColor(184, 134, 11);
+            doc.text('CERTIFICADO DE CONCLUSÃO', 148.5, 50, { align: 'center' });
+
+            // Subtitle
+            doc.setFontSize(16);
+            doc.setTextColor(139, 69, 19);
+            doc.text('🏺 A MALDIÇÃO DO FARAÓ - ESCAPE ROOM 🏺', 148.5, 65, { align: 'center' });
+
+            // Main content
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Por este meio certificamos que', 148.5, 85, { align: 'center' });
+
+            // Player name (highlighted)
+            doc.setFontSize(20);
+            doc.setTextColor(184, 134, 11);
+            doc.text(playerName.toUpperCase(), 148.5, 105, { align: 'center' });
+
+            // Draw line under name
+            const nameWidth = doc.getTextWidth(playerName.toUpperCase());
+            doc.setDrawColor(184, 134, 11);
+            doc.setLineWidth(1);
+            doc.line(148.5 - nameWidth / 2, 108, 148.5 + nameWidth / 2, 108);
+
+            // Continue text
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text('completou com sucesso a aventura', 148.5, 120, { align: 'center' });
+
+            doc.setFontSize(18);
+            doc.setTextColor(139, 69, 19);
+            doc.text('"A MALDIÇÃO DO FARAÓ"', 148.5, 135, { align: 'center' });
+
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text('demonstrando sabedoria, coragem e respeito pela rica cultura do Antigo Egito', 148.5, 150, { align: 'center' });
+
+            // Statistics box
+            doc.setFillColor(255, 255, 255);
+            doc.setDrawColor(212, 175, 55);
+            doc.rect(60, 160, 177, 25, 'FD');
+
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text('ESTATÍSTICAS DA AVENTURA:', 148.5, 168, { align: 'center' });
+
+            doc.text(`Tempo de Conclusão: ${finalTime}`, 80, 175);
+            doc.text(`Data: ${currentDate}`, 80, 180);
+            doc.text('Enigmas Resolvidos: 9/9', 180, 175);
+            doc.text('Símbolos Coletados: ☀️ 🔺 👁️', 180, 180);
+
+            // Title granted
+            doc.setFontSize(16);
+            doc.setTextColor(184, 134, 11);
+            doc.text('ARQUEÓLOGO HONORÁRIO DA PIRÂMIDE', 148.5, 195, { align: 'center' });
+
+            // Footer
+            doc.setFontSize(10);
+            doc.setTextColor(139, 69, 19);
+            doc.text('"Que os deuses egípcios os protejam em futuras aventuras"', 148.5, 205, { align: 'center' });
+
+            // Add symbols at bottom
+            doc.setFontSize(16);
+            doc.setTextColor(212, 175, 55);
+            doc.text('☀️', 120, 200);
+            doc.text('🔺', 148.5, 200, { align: 'center' });
+            doc.text('👁️', 177, 200);
+
+            // Save the PDF
+            const fileName = `Certificado_Farao_${playerName.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`;
+            doc.save(fileName);
+
+            // Show success message
+            showNotification('📜 Certificado baixado com sucesso! Que os deuses egípcios os protejam!', 'success');
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-4 p-4 rounded-lg shadow-lg z-50 max-w-sm ${type === 'success' ? 'bg-green-600 text-white' :
+                    type === 'error' ? 'bg-red-600 text-white' :
+                        'bg-blue-600 text-white'
+                }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="mr-2">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        function victory() {
+            gameState.gameEnded = true;
+            clearInterval(gameState.timerInterval);
+
+            // Calculate final time
+            const totalTime = 3600;
+            const timeUsed = totalTime - gameState.timeLeft;
+            const minutes = Math.floor(timeUsed / 60);
+            const seconds = timeUsed % 60;
+            const finalTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            document.getElementById('final-time').textContent = finalTime;
+
+            // Update certificate with current date
+            const currentDate = new Date().toLocaleDateString('pt-BR');
+            document.getElementById('cert-time').textContent = finalTime;
+            document.getElementById('cert-date').textContent = currentDate;
+
+            goToSection(5);
+        }
+    </script>
+</body>
+
+</html>
